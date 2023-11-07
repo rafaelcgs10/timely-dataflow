@@ -165,10 +165,12 @@ where
         // Child 0 has `inputs` outputs and `outputs` inputs, not yet connected.
         builder.add_node(0, outputs, inputs, vec![vec![Antichain::new(); inputs]; outputs]);
         for (index, child) in self.children.iter().enumerate().skip(1) {
+            println!("Index: {:?} Name: {:?}", child.index, child.name);
             builder.add_node(index, child.inputs, child.outputs, child.internal_summary.clone());
         }
 
         for (source, target) in self.edge_stash {
+            println!("{:?} -- {:?}", source, target);
             self.children[source.node].edges[source.port].push(target);
             builder.add_edge(source, target);
         }
