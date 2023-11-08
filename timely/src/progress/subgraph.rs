@@ -162,11 +162,12 @@ where
 
         let mut builder = reachability::Builder::new();
 
-        println!("graph graphname {{");
+        println!("");
+        println!("digraph graphname {{");
         // Child 0 has `inputs` outputs and `outputs` inputs, not yet connected.
         builder.add_node(0, outputs, inputs, vec![vec![Antichain::new(); inputs]; outputs]);
         for (index, child) in self.children.iter().enumerate().skip(1) {
-            println!("{:?} [label={:?}] ;", child.index, child.name);
+            println!("{:?} [label={:?}_{:?}] ;", child.index, child.name,  child.index);
             builder.add_node(index, child.inputs, child.outputs, child.internal_summary.clone());
         }
 
@@ -177,6 +178,7 @@ where
         }
 
         println!("}}");
+        println!("");
 
         let (tracker, scope_summary) = builder.build();
 
