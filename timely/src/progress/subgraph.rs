@@ -167,7 +167,12 @@ where
         // Child 0 has `inputs` outputs and `outputs` inputs, not yet connected.
         builder.add_node(0, outputs, inputs, vec![vec![Antichain::new(); inputs]; outputs]);
         for (index, child) in self.children.iter().enumerate().skip(1) {
-            println!("{:?} [label={:?}_{:?}] ;", child.index, child.name,  child.index);
+            let index_string: &str = &child.clone().index.to_string();
+            let mut name_string: String = child.name.to_owned();
+            name_string.push_str("_");
+            name_string.push_str(index_string);
+
+            println!("{:?} [label={:?}] ;", child.index, name_string);
             builder.add_node(index, child.inputs, child.outputs, child.internal_summary.clone());
         }
 
