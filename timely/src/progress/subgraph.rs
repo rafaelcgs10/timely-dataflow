@@ -171,7 +171,7 @@ where
         }
 
         for (source, target) in self.edge_stash {
-            println!("{:?} -- {:?}", source.node, target.node);
+            println!("  {:?} -> {:?}", source.node, target.node);
             self.children[source.node].edges[source.port].push(target);
             builder.add_edge(source, target);
         }
