@@ -469,7 +469,7 @@ impl<A: Allocate> Worker<A> {
     /// });
     /// ```
     pub fn step_or_park_while<F: FnMut()->bool>(&mut self, duration: Option<Duration>, mut func: F) {
-        while func() { println!("Steping {:?}", duration); self.step_or_park(duration); }
+        while func() { self.step_or_park(duration); }
     }
 
     /// The index of the worker out of its peers.
