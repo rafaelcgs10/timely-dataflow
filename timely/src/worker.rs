@@ -391,8 +391,10 @@ impl<A: Allocate> Worker<A> {
 
             let mut dataflows = self.dataflows.borrow_mut();
             for index in active_dataflows.drain(..) {
+                println!("Index: {:?}", index);
                 // Step dataflow if it exists, remove if not incomplete.
                 if let Entry::Occupied(mut entry) = dataflows.entry(index) {
+                    println!("Entry: {:?}", entry.key());
                     // TODO: This is a moment at which a scheduling decision is being made.
                     let incomplete = entry.get_mut().step();
                     if !incomplete {
@@ -467,7 +469,7 @@ impl<A: Allocate> Worker<A> {
     /// });
     /// ```
     pub fn step_or_park_while<F: FnMut()->bool>(&mut self, duration: Option<Duration>, mut func: F) {
-        while func() { println!("Steping"); self.step_or_park(duration); }
+        while func() { println!("Steping {:?}", duration); self.step_or_park(duration); }
     }
 
     /// The index of the worker out of its peers.
