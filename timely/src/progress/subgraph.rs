@@ -162,18 +162,27 @@ where
 
         let mut builder = reachability::Builder::new();
 
+        println!("");
+        println!("digraph graphname {{");
         // Child 0 has `inputs` outputs and `outputs` inputs, not yet connected.
         builder.add_node(0, outputs, inputs, vec![vec![Antichain::new(); inputs]; outputs]);
         for (index, child) in self.children.iter().enumerate().skip(1) {
-            println!("Index: {:?} Name: {:?}", child.index, child.name);
+            let index_string: &str = &child.clone().index.to_string();
+            let mut name_string: String = child.name.to_owned();
+            name_string.push_str("_");
+            name_string.push_str(index_string);
+
+            println!("{:?} [label={:?}] ;", child.index, name_string);
             builder.add_node(index, child.inputs, child.outputs, child.internal_summary.clone());
         }
 
         for (source, target) in self.edge_stash {
-            println!("{:?} -- {:?}", source, target);
+            println!("  {:?} -> {:?} ;", source.node, target.node);
             self.children[source.node].edges[source.port].push(target);
             builder.add_edge(source, target);
         }
+        println!("}}");
+        println!("");
 
         // The `None` argument is optional logging infrastructure.
         let path = self.path.clone();
