@@ -1,5 +1,6 @@
 //! The root of each single-threaded worker.
 
+use std::println;
 use std::rc::Rc;
 use std::cell::{RefCell, RefMut};
 use std::any::Any;
@@ -466,7 +467,7 @@ impl<A: Allocate> Worker<A> {
     /// });
     /// ```
     pub fn step_or_park_while<F: FnMut()->bool>(&mut self, duration: Option<Duration>, mut func: F) {
-        while func() { self.step_or_park(duration); }
+        while func() { println!("Steping"); self.step_or_park(duration); }
     }
 
     /// The index of the worker out of its peers.
