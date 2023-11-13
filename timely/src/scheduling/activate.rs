@@ -1,6 +1,6 @@
 //! Parking and unparking timely fibers.
 
-use std::println;
+
 use std::rc::Rc;
 use std::sync::Arc;
 use std::cell::RefCell;
@@ -74,7 +74,6 @@ impl Activations {
 
     /// Activates the task addressed by `path`.
     pub fn activate(&mut self, path: &[usize]) {
-        println!("Activate");
         self.bounds.push((self.slices.len(), path.len()));
         self.slices.extend(path);
     }
