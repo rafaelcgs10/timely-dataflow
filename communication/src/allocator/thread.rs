@@ -37,12 +37,14 @@ impl Allocate for Thread {
         &self.events
     }
     fn await_events(&self, duration: Option<Duration>) {
-        println!("Away events: {:?}, duration {:?}", self.events.borrow().len(), duration);
+        println!("LOG2: Await events: {:?}, duration {:?}", self.events.borrow().len(), duration);
         if self.events.borrow().is_empty() {
             if let Some(duration) = duration {
+                println!("LOG2: >>>>>> Parking with timeout");
                 std::thread::park_timeout(duration);
             }
             else {
+                println!("LOG2: >>>>>>> >>>>> Parking");
                 std::thread::park();
             }
         }

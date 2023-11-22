@@ -356,11 +356,11 @@ impl<A: Allocate> Worker<A> {
         }
 
         // Organize activations.
-        println!("Before advance");
+        println!("LOG2: Before advance");
         self.activations
             .borrow_mut()
             .advance();
-        println!("After advance");
+        println!("LOG2: After advance");
 
         // Consider parking only if we have no pending events, some dataflows, and a non-zero duration.
         let empty_for = self.activations.borrow().empty_for();
@@ -378,11 +378,11 @@ impl<A: Allocate> Worker<A> {
                 l.flush();
             }
 
-        println!("Before awayit events, delay: {:?}", delay);
+        println!("LOG2: Before awayit events, delay: {:?}", delay);
             self.allocator
                 .borrow()
                 .await_events(delay);
-        println!("After awayit events");
+        println!("LOG2: After awayit events");
 
             // Log return from unpark.
             self.logging().as_mut().map(|l| l.log(crate::logging::ParkEvent::unpark()));
@@ -390,7 +390,7 @@ impl<A: Allocate> Worker<A> {
         else {   // Schedule active dataflows.
 
             let active_dataflows = &mut self.active_dataflows;
-            println!("Active dataflows: {:?}", active_dataflows.len());
+            println!("LOG2: Active dataflows: {:?}", active_dataflows.len());
             self.activations
                 .borrow_mut()
                 .for_extensions(&[], |index| active_dataflows.push(index));
@@ -415,7 +415,7 @@ impl<A: Allocate> Worker<A> {
         // Clean up, indicate if dataflows remain.
         self.logging.borrow_mut().flush();
         self.allocator.borrow_mut().release();
-        println!("Dataflows {:?}", self.dataflows.borrow().len());
+        println!("LOG2: Existing Dataflows {:?}", self.dataflows.borrow().len());
 
         !self.dataflows.borrow().is_empty()
     }
