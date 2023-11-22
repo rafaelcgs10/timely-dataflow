@@ -74,6 +74,7 @@
 
 use std::collections::{BinaryHeap, HashMap, VecDeque};
 use std::cmp::Reverse;
+use std::println;
 
 use crate::progress::Timestamp;
 use crate::progress::{Source, Target};
@@ -771,7 +772,9 @@ fn summarize_outputs<T: Timestamp>(
     }
 
     // Loop until we stop discovering novel reachability paths.
+    println!("Starting propagation {:?}", worklist);
     while let Some((location, output, summary)) = worklist.pop_front() {
+        println!("Step");
 
         match location.port {
 
@@ -825,6 +828,7 @@ fn summarize_outputs<T: Timestamp>(
         }
 
     }
+    println!("Stoped propagation");
 
     results
 }
