@@ -74,6 +74,7 @@
 
 use std::collections::{BinaryHeap, HashMap, VecDeque};
 use std::cmp::Reverse;
+use std::println;
 
 use crate::progress::Timestamp;
 use crate::progress::{Source, Target};
@@ -596,7 +597,9 @@ impl<T:Timestamp> Tracker<T> {
         //       The intent is that that by moving forward in layers through `time`, we
         //       will discover zero-change times when we first visit them, as no further
         //       changes can be made to them once we complete them.
+        println!("Starting propagation: {:?}", self.worklist);
         while let Some(Reverse((time, location, mut diff))) = self.worklist.pop() {
+            println!("Step");
 
             // Drain and accumulate all updates that have the same time and location.
             while self.worklist.peek().map(|x| ((x.0).0 == time) && ((x.0).1 == location)).unwrap_or(false) {
@@ -654,6 +657,7 @@ impl<T:Timestamp> Tracker<T> {
                 };
             }
         }
+        println!("Ending propagation");
     }
 
     /// Implications of maintained capabilities projected to each output.
