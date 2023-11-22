@@ -378,9 +378,11 @@ impl<A: Allocate> Worker<A> {
                 l.flush();
             }
 
+        println!("Before awayit events");
             self.allocator
                 .borrow()
                 .await_events(delay);
+        println!("After awayit events");
 
             // Log return from unpark.
             self.logging().as_mut().map(|l| l.log(crate::logging::ParkEvent::unpark()));
@@ -388,6 +390,7 @@ impl<A: Allocate> Worker<A> {
         else {   // Schedule active dataflows.
 
             let active_dataflows = &mut self.active_dataflows;
+            println!("Active dataflows: {:?}", active_dataflows.len());
             self.activations
                 .borrow_mut()
                 .for_extensions(&[], |index| active_dataflows.push(index));
