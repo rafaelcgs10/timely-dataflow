@@ -412,6 +412,8 @@ impl<A: Allocate> Worker<A> {
         // Clean up, indicate if dataflows remain.
         self.logging.borrow_mut().flush();
         self.allocator.borrow_mut().release();
+        println!("Dataflows {:?}", self.dataflows.borrow().len());
+
         !self.dataflows.borrow().is_empty()
     }
 
