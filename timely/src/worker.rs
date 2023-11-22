@@ -1,6 +1,7 @@
 //! The root of each single-threaded worker.
 
 
+use std::println;
 use std::rc::Rc;
 use std::cell::{RefCell, RefMut};
 use std::any::Any;
@@ -355,9 +356,11 @@ impl<A: Allocate> Worker<A> {
         }
 
         // Organize activations.
+        println!("Before advance");
         self.activations
             .borrow_mut()
             .advance();
+        println!("After advance");
 
         // Consider parking only if we have no pending events, some dataflows, and a non-zero duration.
         let empty_for = self.activations.borrow().empty_for();
