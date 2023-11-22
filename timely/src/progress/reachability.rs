@@ -642,7 +642,9 @@ impl<T:Timestamp> Tracker<T> {
         //       The intent is that that by moving forward in layers through `time`, we
         //       will discover zero-change times when we first visit them, as no further
         //       changes can be made to them once we complete them.
+        println!("Starting propagation {:?}", self.worklist);
         while let Some(Reverse((time, location, mut diff))) = self.worklist.pop() {
+            println!("Step");
 
             // Drain and accumulate all updates that have the same time and location.
             while self.worklist.peek().map(|x| ((x.0).0 == time) && ((x.0).1 == location)).unwrap_or(false) {
@@ -700,6 +702,8 @@ impl<T:Timestamp> Tracker<T> {
                 };
             }
         }
+        println!("Stoped propagation");
+
     }
 
     /// Implications of maintained capabilities projected to each output.
@@ -772,10 +776,7 @@ fn summarize_outputs<T: Timestamp>(
     }
 
     // Loop until we stop discovering novel reachability paths.
-    println!("Starting propagation {:?}", worklist);
     while let Some((location, output, summary)) = worklist.pop_front() {
-        println!("Step");
-
         match location.port {
 
             // This is an output port of an operator, or a scope input.
@@ -828,7 +829,6 @@ fn summarize_outputs<T: Timestamp>(
         }
 
     }
-    println!("Stoped propagation");
 
     results
 }
