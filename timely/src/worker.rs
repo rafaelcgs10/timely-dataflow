@@ -378,7 +378,7 @@ impl<A: Allocate> Worker<A> {
                 l.flush();
             }
 
-        println!("Before awayit events");
+        println!("Before awayit events, delay: {:?}", delay);
             self.allocator
                 .borrow()
                 .await_events(delay);
