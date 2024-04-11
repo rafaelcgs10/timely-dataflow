@@ -362,7 +362,6 @@ impl<A: Allocate> Worker<A> {
 
         // Consider parking only if we have no pending events, some dataflows, and a non-zero duration.
         let empty_for = self.activations.borrow().empty_for();
-        println!("LOG2: activations {:?}", self.activations.borrow());
         // Determine the minimum park duration, where `None` are an absence of a constraint.
         let delay = match (duration, empty_for) {
             (Some(x), Some(y)) => Some(std::cmp::min(x,y)),
