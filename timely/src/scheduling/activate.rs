@@ -95,14 +95,12 @@ impl Activations {
 
         // Drain inter-thread activations.
         while let Ok(path) = self.rx.try_recv() {
-            println!("While 1 in advance");
             self.activate(&path[..])
         }
 
         // Drain timer-based activations.
         let now = self.timer.elapsed();
         while self.queue.peek().map(|Reverse((t,_))| t <= &now) == Some(true) {
-            println!("While 2 in advance");
             let Reverse((_time, path)) = self.queue.pop().unwrap();
             self.activate(&path[..]);
         }
@@ -118,7 +116,6 @@ impl Activations {
         // Compact the slices.
         self.buffer.clear();
         for (offset, length) in self.bounds.iter_mut() {
-            println!("For 1 in advance");
             self.buffer.extend(&self.slices[*offset .. (*offset + *length)]);
             *offset = self.buffer.len() - *length;
         }
