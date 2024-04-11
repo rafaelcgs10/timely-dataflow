@@ -368,7 +368,6 @@ impl<A: Allocate> Worker<A> {
             (Some(x), Some(y)) => Some(std::cmp::min(x,y)),
             (x, y) => x.or(y),
         };
-        println!("LOG2: Delay {:?}", delay);
 
         if delay != Some(Duration::new(0,0)) {
 

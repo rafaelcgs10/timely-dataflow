@@ -362,9 +362,18 @@ where
             self.incomplete[child_index] = incomplete;
         }
 
+
         if !incomplete {
             // Consider shutting down the child, if neither capabilities nor input frontier.
             let child_state = self.pointstamp_tracker.node_state(child_index);
+            // println!("LOG2: Child targets {:?}", child_state.targets);
+            println!("________");
+            println!("Child name: {:?}", child_index);
+            for imp in child_state.targets.iter() {
+                println!("LOG2: implications {:?}", imp.implications);
+                println!("LOG2: pointstamps {:?}", imp.pointstamps);
+            }
+            println!("________");
             let frontiers_empty = child_state.targets.iter().all(|x| x.implications.is_empty());
             let no_capabilities = child_state.sources.iter().all(|x| x.pointstamps.is_empty());
             if frontiers_empty && no_capabilities {
