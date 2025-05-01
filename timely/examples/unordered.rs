@@ -23,7 +23,14 @@ fn main() {
 
         worker.log_register().insert::<TrackerEvent,_>("timely/reachability", |_time, data|
                                                        data.iter().for_each(|x| { match &x.2 {
-                                                           TrackerEvent::SourceUpdate(su) => { println!("Source updates: "); su.updates.iter().for_each(|(ad, _, tp, count)| { print!("Location: {:?}, time: {:?}, count: {:?}", ad, tp, count); println!("");}); println!(""); },
+                                                           TrackerEvent::SourceUpdate(su) => {
+                                                               println!("Source updates: ");
+                                                               su.updates.iter().for_each(|(ad, _, tp, count)| {
+                                                                   print!("Location: {:?}, time: {:?}, delta: {:?}", ad, tp, count);
+                                                                   println!("");
+                                                               });
+                                                               println!("");
+                                                           },
                                                            TrackerEvent::TargetUpdate(tu) => println!("Target updates: {:?} in {:?}", tu.updates, tu.tracker_id),
                                                        }})
         );
@@ -74,12 +81,14 @@ fn main() {
             input
         });
 
-        cap = cap.delayed(&(1 as usize));
+        cap = cap.delayed(&(0 as usize));
 
-        input.session(cap.delayed(&2)).give(3);
-        input.session(cap.delayed(&1)).give(0);
-        input.session(cap.delayed(&5)).give(1);
-        input.session(cap.delayed(&5)).give(2);
+        input.session(cap.delayed(&1)).give(1);
+        input.session(cap.delayed(&1)).give(2);
+        input.session(cap.delayed(&1)).give(3);
+        input.session(cap.delayed(&4)).give(4);
+        input.session(cap.delayed(&4)).give(5);
+        input.session(cap.delayed(&5)).give(6);
 
         worker.step();
 

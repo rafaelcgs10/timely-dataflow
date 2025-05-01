@@ -642,7 +642,7 @@ impl<T:Timestamp> Tracker<T> {
         //       The intent is that that by moving forward in layers through `time`, we
         //       will discover zero-change times when we first visit them, as no further
         //       changes can be made to them once we complete them.
-        println!("Starting propagation! Worklist: {:?}", self.worklist);
+        // println!("Starting propagation! Worklist: {:?}", self.worklist);
         while let Some(Reverse((time, location, mut diff))) = self.worklist.pop() {
 
             // Drain and accumulate all updates that have the same time and location.
@@ -701,7 +701,7 @@ impl<T:Timestamp> Tracker<T> {
                 };
             }
         }
-        println!("Propagation ended");
+        // println!("Propagation ended");
 
     }
 

@@ -162,8 +162,8 @@ where
 
         let mut builder = reachability::Builder::new();
 
-        println!("");
-        println!("digraph graphname {{");
+        // println!("");
+        // println!("digraph graphname {{");
         // Child 0 has `inputs` outputs and `outputs` inputs, not yet connected.
         builder.add_node(0, outputs, inputs, vec![vec![Antichain::new(); inputs]; outputs]);
         for (index, child) in self.children.iter().enumerate().skip(1) {
@@ -172,17 +172,17 @@ where
             name_string.push_str("_");
             name_string.push_str(index_string);
 
-            println!("{:?} [label={:?}] ;", child.index, name_string);
+            // println!("{:?} [label={:?}] ;", child.index, name_string);
             builder.add_node(index, child.inputs, child.outputs, child.internal_summary.clone());
         }
 
         for (source, target) in self.edge_stash {
-            println!("  {:?} -> {:?} ;", source.node, target.node);
+            // println!("  {:?} -> {:?} ;", source.node, target.node);
             self.children[source.node].edges[source.port].push(target);
             builder.add_edge(source, target);
         }
-        println!("}}");
-        println!("");
+        // println!("}}");
+        // println!("");
 
         // The `None` argument is optional logging infrastructure.
         let path = self.path.clone();
@@ -299,10 +299,13 @@ where
         self.harvest_inputs();          // Count records entering the scope.
 
         // Receive post-exchange progress updates.
+        // println!("Before receiving: {:?}", self.final_pointstamp);
         self.progcaster.recv(&mut self.final_pointstamp);
+        // println!("After receiving: {:?}", self.final_pointstamp);
 
         // Commit and propagate final pointstamps.
         self.propagate_pointstamps();
+        // println!("After propagating: {:?}", self.final_pointstamp);
 
         {   // Enqueue active children; scoped to let borrow drop.
             let temp_active = &mut self.temp_active;
@@ -351,6 +354,7 @@ where
     ///
     /// The return value indicates that the child task cannot yet shut down.
     fn activate_child(&mut self, child_index: usize) -> bool {
+        println!("---- Scheduling child: {:?}", child_index);
 
         let child = &mut self.children[child_index];
 
@@ -367,15 +371,12 @@ where
             // Consider shutting down the child, if neither capabilities nor input frontier.
             let child_state = self.pointstamp_tracker.node_state(child_index);
             // println!("LOG2: Child targets {:?}", child_state.targets);
-            println!("________");
-            println!("Child name: {:?}", child_index);
-            for c in child_state.sources.iter() {
-                println!("LOG2: capabilities {:?}", c.pointstamps);
-            }
-            for c in child_state.targets.iter() {
-                println!("LOG2: implications {:?}", c.implications);
-            }
-            println!("________");
+            // for c in child_state.sources.iter() {
+            //     println!("Pointstamps: {:?}", c.pointstamps);
+            // }
+            // for c in child_state.targets.iter() {
+            //     println!("Implications: {:?}", c.implications);
+            // }
             let frontiers_empty = child_state.targets.iter().all(|x| x.implications.is_empty());
             let no_capabilities = child_state.sources.iter().all(|x| x.pointstamps.is_empty());
             if frontiers_empty && no_capabilities {
@@ -385,7 +386,7 @@ where
         else {
             // In debug mode, check that the progress statements do not violate invariants.
             #[cfg(debug_assertions)] {
-                child.validate_progress(self.pointstamp_tracker.node_state(child_index));
+                // child.validate_progress(self.pointstamp_tracker.node_state(child_index));
             }
         }
 
@@ -396,6 +397,7 @@ where
         else {
             child.extract_progress(&mut self.final_pointstamp, &mut self.temp_active);
         }
+        println!("---- End scheduling");
 
         incomplete
     }
@@ -476,6 +478,7 @@ where
                 }
             }
             else {
+                // println!("Pointstamp tracker ---: location {:?}, timestamp: {:?}, delta: {:?} :---", location, timestamp, delta);
                 self.pointstamp_tracker.update(location, timestamp, delta);
             }
         }
@@ -544,6 +547,7 @@ where
         };
 
         if must_send {
+            // println!("Sending updates: {:?}", self.local_pointstamp);
             self.progcaster.send(&mut self.local_pointstamp);
         }
     }
@@ -760,18 +764,21 @@ impl<T: Timestamp> PerOperatorState<T> {
         for (input, consumed) in shared_progress.consumeds.iter_mut().enumerate() {
             let target = Location::new_target(self.index, input);
             for (time, delta) in consumed.drain() {
+                println!("Consumed (target): {:?}, time: {:?}, delta: {:?}", target, time, -delta);
                 pointstamps.update((target, time), -delta);
             }
         }
         for (output, internal) in shared_progress.internals.iter_mut().enumerate() {
             let source = Location::new_source(self.index, output);
             for (time, delta) in internal.drain() {
+                println!("Internal (source): {:?}, time: {:?}, delta: {:?}", source, time, delta);
                 pointstamps.update((source, time.clone()), delta);
             }
         }
         for (output, produced) in shared_progress.produceds.iter_mut().enumerate() {
             for (time, delta) in produced.drain() {
                 for target in &self.edges[output] {
+                    println!("Produced (target): {:?}, time: {:?}, delta: {:?}", Location::from(*target), time, delta);
                     pointstamps.update((Location::from(*target), time.clone()), delta);
                     temp_active.push(Reverse(target.node));
                 }

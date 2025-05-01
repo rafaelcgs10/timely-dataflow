@@ -56,7 +56,7 @@ fn main() {
         });
 
         // introduce data and watch!
-        for round in 0..10 {
+        for round in 0..2 {
             input.send(("round".to_owned(), 1));
             input.advance_to(round + 1);
             while probe.less_than(input.time()) {

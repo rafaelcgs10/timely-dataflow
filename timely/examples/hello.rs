@@ -14,15 +14,15 @@ fn main() {
         // create a new input, exchange data, and inspect its output
         worker.dataflow(|scope| {
             scope.input_from(&mut input)
-                 .exchange(|x| *x)
-                 .inspect(move |x| println!("worker {}:\thello {}", index, x))
                  .probe_with(&mut probe);
         });
 
         // introduce data and watch!
-        for round in 0..10 {
+        for round in 0..2 {
             if index == 0 {
                 input.send(round);
+                input.send(round + 1);
+                input.send(round + 2);
             }
             input.advance_to(round + 1);
             while probe.less_than(input.time()) {

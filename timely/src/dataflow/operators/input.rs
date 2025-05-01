@@ -442,6 +442,7 @@ impl<T: Timestamp, D: Container> HandleCore<T, D> {
             self.now_at = next;
             for progress in self.progress.iter() {
                 progress.borrow_mut().update(self.now_at.clone(), 1);
+                println!("advance_to causing progress change: {:?}", progress);
             }
         }
     }
