@@ -205,6 +205,7 @@ impl<T:Timestamp> Operate<T> for UnorderedOperator<T> {
     fn get_internal_summary(&mut self) -> (Vec<Vec<Antichain<<T as Timestamp>::Summary>>>, Rc<RefCell<SharedProgress<T>>>) {
         let mut borrow = self.internal.borrow_mut();
         for (time, count) in borrow.drain() {
+            println!("Updating internal: time {:?} with len: {:?}, reason: get internal from unordered input", time, count * (self.peers as i64));
             self.shared_progress.borrow_mut().internals[0].update(time, count * (self.peers as i64));
         }
         (Vec::new(), self.shared_progress.clone())

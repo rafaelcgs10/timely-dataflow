@@ -6,6 +6,7 @@ use std::hash::Hash;
 use std::println;
 use timely::dataflow::channels::pact::Pipeline;
 use timely::dataflow::operators::*;
+use colored::Colorize;
 
 use timely::dataflow::{ProbeHandle};
 use timely::dataflow::operators::{Operator, Inspect, Probe};
@@ -71,18 +72,18 @@ fn main() {
                         buffer.retain(|_key, val| !val.is_empty());
                     }
                 })
-                .inspect_batch(move |t, xs| {
-                    for x in xs.iter() {
-                        println!("batched {} @ {:?}", x, t)
-                    }
-                })
                 .probe_with(&mut probe);
 
             input
         });
 
-        cap = cap.delayed(&(0 as usize));
+        println!("{}", "Setting initial cap to 1".red());
+        cap = cap.delayed(&(1 as usize));
+        let _cap2 = cap.delayed(&(42 as usize));
+        let _cap3 = cap.delayed(&(42 as usize));
+        let _cap4 = cap.delayed(&(42 as usize));
 
+        println!("{}", "Sending data".green());
         input.session(cap.delayed(&1)).give(1);
         input.session(cap.delayed(&1)).give(2);
         input.session(cap.delayed(&1)).give(3);
@@ -90,21 +91,24 @@ fn main() {
         input.session(cap.delayed(&4)).give(5);
         input.session(cap.delayed(&5)).give(6);
 
+        println!("{}", "Initial steps".green());
         worker.step();
 
-        println!("Replaces initial cap by 4");
+        println!("{}", "Replaces initial cap by 4".red());
         cap = cap.delayed(&4);
+        println!("{}", "Steps".green());
         while probe.less_than(&4) {
             worker.step();
         }
 
-        println!("Replaces cap 4 by 5");
+        println!("{}", "Replaces cap 4 cap by 5".red());
+        println!("{}", "Steps".green());
         cap = cap.delayed(&5);
         while probe.less_than(&5) {
             worker.step();
         }
 
-        println!("Replaces cap 5 by 7");
+        println!("{}", "Replaces cap 5 cap by 7".red());
         cap = cap.delayed(&7);
         while probe.less_than(&7) {
             worker.step();

@@ -397,7 +397,7 @@ where
         else {
             child.extract_progress(&mut self.final_pointstamp, &mut self.temp_active);
         }
-        println!("---- End scheduling");
+        println!("---- End scheduling\n");
 
         incomplete
     }
@@ -757,6 +757,7 @@ impl<T: Timestamp> PerOperatorState<T> {
 
     /// Extracts shared progress information and converts to pointstamp changes.
     fn extract_progress(&mut self, pointstamps: &mut ChangeBatch<(Location, T)>, temp_active: &mut BinaryHeap<Reverse<usize>>) {
+        println!(":::Extracting progress:::");
 
         let shared_progress = &mut *self.shared_progress.borrow_mut();
 

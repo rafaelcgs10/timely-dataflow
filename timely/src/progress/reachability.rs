@@ -914,6 +914,7 @@ impl<T: Timestamp> Drop for Tracker<T> {
             // No cleanup necessary when there is no logger.
             return;
         };
+        println!("=====> Drop at progress reachability");
 
         // Retract pending data that `propagate_all` would normally log.
         for (index, per_operator) in self.per_operator.iter_mut().enumerate() {

@@ -24,7 +24,7 @@ impl<T: Timestamp, D: Container, P> Push<BundleCore<T, D>> for CounterCore<T, D,
     #[inline]
     fn push(&mut self, message: &mut Option<BundleCore<T, D>>) {
         if let Some(message) = message {
-            println!("Sending at timestamp {:?} with len: {:?}", message.time.clone(), message.data.len());
+            println!("Updating produced: time {:?} with len: {:?}, reason: sending message", message.time.clone(), message.data.len());
             self.produced.borrow_mut().update(message.time.clone(), message.data.len() as i64);
         }
 

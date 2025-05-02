@@ -33,6 +33,7 @@ impl<T:Debug+Ord+Clone+'static> Drop for ConsumedGuard<T> {
     fn drop(&mut self) {
         // SAFETY: we're in a Drop impl, so this runs at most once
         let time = self.time.take().unwrap();
+        println!("Updating consumed: time {:?} with len: {:?}, reason: drop in pull counters", time, self.len as i64);
         self.consumed.borrow_mut().update(time, self.len as i64);
     }
 }
@@ -53,7 +54,6 @@ impl<T:Debug+Ord+Clone+'static, D: Container, P: Pull<BundleCore<T, D>>> Counter
                 time: Some(message.time.clone()),
                 len: message.data.len(),
             };
-            println!("Receiving at timestamp {:?} with len: {:?}", guard.time(), message.data.len());
             Some((guard, message))
         }
         else { None }

@@ -108,6 +108,7 @@ impl<G: Scope, D: Container> Probe<G, D> for StreamCore<G, D> {
 
                 if !started {
                     // discard initial capability.
+                    println!("Updating internal: time {:?} with len: {:?}, reason: build from probe", G::Timestamp::minimum(), -1);
                     progress.internals[0].update(G::Timestamp::minimum(), -1);
                     started = true;
                 }

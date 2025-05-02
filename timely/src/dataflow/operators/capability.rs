@@ -76,6 +76,7 @@ impl<T: Timestamp> Capability<T> {
     /// [`ChangeBatch`].
     pub(crate) fn new(time: T, internal: Rc<RefCell<ChangeBatch<T>>>) -> Self {
         // println!("Creating capability");
+        println!("Updating internal: time {:?} with len: {:?}, reason: new capability", time.clone(), 1);
         internal.borrow_mut().update(time.clone(), 1);
 
         Self {
@@ -166,7 +167,7 @@ impl<T: Timestamp> Capability<T> {
 // to send data and request notification at the associated timestamp.
 impl<T: Timestamp> Drop for Capability<T> {
     fn drop(&mut self) {
-        // println!("Downgrading!");
+        println!("Updating internal: time: {:?} delta: {:?}, reason drop of capability", self.time.clone(), -1);
         self.internal.borrow_mut().update(self.time.clone(), -1);
     }
 }
