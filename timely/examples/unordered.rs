@@ -96,8 +96,8 @@ fn main() {
 
         println!("{}", "Replaces initial cap by 4".red());
         cap = cap.delayed(&4);
-        println!("{}", "Steps".green());
         while probe.less_than(&4) {
+        println!("{}", "steps".green());
             worker.step();
         }
 

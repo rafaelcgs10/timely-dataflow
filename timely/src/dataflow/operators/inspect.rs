@@ -139,7 +139,7 @@ impl<G: Scope, C: Container> InspectCore<G, C> for StreamCore<G, C> {
         use crate::progress::timestamp::Timestamp;
         let mut frontier = crate::progress::Antichain::from_elem(G::Timestamp::minimum());
         let mut vector = Default::default();
-        self.unary_frontier(Pipeline, "InspectBatch", move |_,_| move |input, output| {
+        self.unary_frontier(Pipeline, "InspectBatch", move |cap,_| move |input, output| {
             if input.frontier.frontier() != frontier.borrow() {
                 frontier.clear();
                 frontier.extend(input.frontier.frontier().iter().cloned());

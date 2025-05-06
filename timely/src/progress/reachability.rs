@@ -599,6 +599,7 @@ impl<T:Timestamp> Tracker<T> {
         // changes in the frontier, rather than changes in the pointstamp counts that
         // witness that frontier.
         for ((target, time), diff) in self.target_changes.drain() {
+            println!("=====> Change to targets. Target: {:?}, at time: {:?}, multi: {:?}", target, time, diff);
 
             let operator = &mut self.per_operator[target.node].targets[target.port];
             let changes = operator.pointstamps.update_iter(Some((time, diff)));
